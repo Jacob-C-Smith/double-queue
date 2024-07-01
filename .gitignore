@@ -53,3 +53,7 @@ dkms.conf
 build/
 lib/
 .vscode/
+/CMakeFiles
+CMakeCache.txt
+Makefile
+cmake_install.cmake

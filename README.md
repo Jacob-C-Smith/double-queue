@@ -74,10 +74,10 @@ int  double_queue_rear  ( const double_queue *const p_double_queue, const void *
 bool double_queue_empty ( const double_queue *const p_double_queue );
 
 // Mutators
-int double_queue_enqueue_front ( double_queue *const p_double_queue,       void  *const data );
-int double_queue_dequeue_front ( double_queue *const p_double_queue, const void **const pp_value );
-int double_queue_enqueue_rear  ( double_queue *const p_double_queue,       void  *const data );
-int double_queue_dequeue_rear  ( double_queue *const p_double_queue, const void **const pp_value );
+int double_queue_front_add ( double_queue *const p_double_queue,       void  *const data );
+int double_queue_front_remove ( double_queue *const p_double_queue, const void **const pp_value );
+int double_queue_rear_add  ( double_queue *const p_double_queue,       void  *const data );
+int double_queue_rear_remove  ( double_queue *const p_double_queue, const void **const pp_value );
 
 // Destructors
 int double_queue_destroy ( double_queue **const pp_double_queue );

@@ -12,6 +12,9 @@
 // sync submodule
 #include <sync/sync.h>
 
+// log submodule
+#include <log/log.h>
+
 // Standard library
 #include <stdio.h>
 #include <string.h>
@@ -38,6 +41,16 @@ struct double_queue_s;
  *  @brief The type definition of a double queue struct
  */
 typedef struct double_queue_s double_queue;
+
+// Initializers
+/** !
+ * This is called before main
+ * 
+ * @parma void
+ * 
+ * @return void
+ */
+void double_queue_init ( void ) __attribute__((constructor));
 
 // Allocaters
 /** !
@@ -120,11 +133,11 @@ DLLEXPORT bool double_queue_empty ( const double_queue *const p_double_queue );
  * @param p_double_queue the double queue
  * @param data           element to add to the double queue
  *
- * @sa double_queue_dequeue_front
+ * @sa double_queue_front_remove
  *
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int double_queue_enqueue_front ( double_queue *const p_double_queue, void *const data );
+DLLEXPORT int double_queue_front_add ( double_queue *const p_double_queue, void *const data );
 
 /** !
  *  Remove an element from the front of a double queue
@@ -132,11 +145,11 @@ DLLEXPORT int double_queue_enqueue_front ( double_queue *const p_double_queue, v
  * @param p_double_queue the double queue
  * @param pp_value       return
  *
- * @sa double_queue_enqueue_front
+ * @sa double_queue_front_add
  *
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int double_queue_dequeue_front ( double_queue *const p_double_queue, void **const pp_value );
+DLLEXPORT int double_queue_front_remove ( double_queue *const p_double_queue, void **const pp_value );
 
 /** !
  *  Add an element to the rear of a double queue
@@ -144,11 +157,11 @@ DLLEXPORT int double_queue_dequeue_front ( double_queue *const p_double_queue, v
  * @param p_double_queue the double queue
  * @param data           element to add to the double queue
  *
- * @sa double_queue_dequeue_rear
+ * @sa double_queue_rear_remove
  *
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int double_queue_enqueue_rear ( double_queue *const p_double_queue, void *const data );
+DLLEXPORT int double_queue_rear_add ( double_queue *const p_double_queue, void *const data );
 
 /** !
  *  Remove an element from the rear of a double queue
@@ -156,11 +169,11 @@ DLLEXPORT int double_queue_enqueue_rear ( double_queue *const p_double_queue, vo
  * @param p_double_queue the double queue
  * @param pp_value       return
  *
- * @sa double_queue_enqueue_rear
+ * @sa double_queue_rear_add
  *
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int double_queue_dequeue_rear ( double_queue *const p_double_queue, void **const pp_value );
+DLLEXPORT int double_queue_rear_remove ( double_queue *const p_double_queue, void **const pp_value );
 
 // Destructors
 /** !

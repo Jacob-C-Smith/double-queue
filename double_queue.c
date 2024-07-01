@@ -1,5 +1,15 @@
+/** !
+ * Double queue implementation
+ * 
+ * @file double_queue.c
+ * 
+ * @author Jacob Smith
+ */
+
+// interface
 #include <double_queue/double_queue.h>
 
+// structure definitions
 struct double_queue_node_s
 {
 	void *content; 
@@ -13,6 +23,27 @@ struct double_queue_s
                                *rear;
 	mutex _lock;
 };
+
+// Data
+static bool initialized = false;
+
+void double_queue_init ( void )
+{
+
+	if ( initialized == true ) return;
+
+	// Initialize log
+	log_init();
+
+	// Initialize sync
+	sync_init();
+
+	// Set the initialized flag
+	initialized = true;
+
+	// Done
+	return;
+}
 
 int double_queue_create ( double_queue **const pp_double_queue )
 {
@@ -133,7 +164,7 @@ int double_queue_from_contents ( double_queue **const pp_double_queue, void* con
 	for (size_t i = 0; i < size; i++)
 
 		// Add the item to the queue
-		double_queue_enqueue_rear(*pp_double_queue, pp_contents[i]);
+		double_queue_rear_add(*pp_double_queue, pp_contents[i]);
 	
 	// Success
 	return 1;
@@ -180,7 +211,7 @@ int double_queue_front ( const double_queue *const p_double_queue, void ** const
 	if ( p_double_queue == (void *) 0 ) goto no_double_queue;
 
 	// Lock
-	mutex_lock(p_double_queue->_lock);
+	mutex_lock(&p_double_queue->_lock);
 
 	// State check
 	if ( double_queue_empty(p_double_queue) ) goto no_double_queue_contents;
@@ -190,7 +221,7 @@ int double_queue_front ( const double_queue *const p_double_queue, void ** const
 		*pp_value = ((struct double_queue_node_s *)(p_double_queue->front))->content;
 	
 	// Unlock
-	mutex_unlock(p_double_queue->_lock);
+	mutex_unlock(&p_double_queue->_lock);
 
 	// Exit
 	return 1;
@@ -226,7 +257,7 @@ int double_queue_rear ( const double_queue *const p_double_queue, void **const p
 	if ( p_double_queue == (void *) 0 ) goto no_double_queue;
 	
 	// Lock
-	mutex_lock(p_double_queue->_lock);
+	mutex_lock(&p_double_queue->_lock);
 
 	// State check
 	if ( double_queue_empty(p_double_queue) ) goto no_double_queue_contents;
@@ -236,7 +267,7 @@ int double_queue_rear ( const double_queue *const p_double_queue, void **const p
 		*pp_value = ((struct double_queue_node_s *)(p_double_queue->rear))->content;
 	
 	// Unlock
-	mutex_unlock(p_double_queue->_lock);
+	mutex_unlock(&p_double_queue->_lock);
 
 	// Exit
 	return 1;
@@ -260,7 +291,7 @@ int double_queue_rear ( const double_queue *const p_double_queue, void **const p
 				#endif
 			
 				// Unlock
-				mutex_unlock(p_double_queue->_lock);
+				mutex_unlock(&p_double_queue->_lock);
 
 				// Error
 				return 0;
@@ -275,13 +306,13 @@ bool double_queue_empty ( const double_queue *const p_double_queue )
 	if ( p_double_queue == (void *)0 ) goto no_double_queue;
 
 	// Lock
-	mutex_lock(p_double_queue->_lock);
+	mutex_lock(&p_double_queue->_lock);
 
 	// Initialized data
 	bool ret = ( p_double_queue->front == 0 );
 
 	// Unlock
-	mutex_unlock(p_double_queue->_lock);
+	mutex_unlock(&p_double_queue->_lock);
 	
 	// Success
 	return ret;
@@ -302,14 +333,14 @@ bool double_queue_empty ( const double_queue *const p_double_queue )
 	}
 }
 
-int double_queue_enqueue_front ( double_queue *const p_double_queue, void *const data )
+int double_queue_front_add ( double_queue *const p_double_queue, void *const data )
 {
 
 	// Argument check
 	if ( p_double_queue == (void *) 0 ) goto no_double_queue;
 
 	// Lock
-	mutex_lock(p_double_queue->_lock);
+	mutex_lock(&p_double_queue->_lock);
 
 	// Initialized data
 	struct double_queue_node_s *e = p_double_queue->front, // E comes before F(ront)
@@ -340,7 +371,7 @@ int double_queue_enqueue_front ( double_queue *const p_double_queue, void *const
 	f->content = data;
 	
 	// Unlock
-	mutex_unlock(p_double_queue->_lock);
+	mutex_unlock(&p_double_queue->_lock);
 
 	// Success
 	return 1;
@@ -372,14 +403,14 @@ int double_queue_enqueue_front ( double_queue *const p_double_queue, void *const
 	}
 }
 
-int double_queue_dequeue_front ( double_queue *const p_double_queue, void **const pp_value )
+int double_queue_front_remove ( double_queue *const p_double_queue, void **const pp_value )
 {
 	
 	// Argument check
 	if ( p_double_queue == (void *) 0 ) goto no_double_queue;
 	
 	// Lock
-	mutex_lock(p_double_queue->_lock);
+	mutex_lock(&p_double_queue->_lock);
 	
 	// State check
 	if ( p_double_queue->front == 0 ) goto queue_empty;
@@ -404,10 +435,10 @@ int double_queue_dequeue_front ( double_queue *const p_double_queue, void **cons
 		*pp_value = ret_m->content;
 
 	// Free the memory
-	(void) DOUBLE_QUEUE_REALLOC(ret_m, 0);
+	ret_m = DOUBLE_QUEUE_REALLOC(ret_m, 0);
 		
 	// Unlock
-	mutex_unlock(p_double_queue->_lock);
+	mutex_unlock(&p_double_queue->_lock);
 	
 	// Success
 	return 1;
@@ -433,7 +464,7 @@ int double_queue_dequeue_front ( double_queue *const p_double_queue, void **cons
 				// No output...
 				
 				// Unlock
-				mutex_unlock(p_double_queue->_lock);
+				mutex_unlock(&p_double_queue->_lock);
 
 				// Error
 				return 0;
@@ -441,14 +472,14 @@ int double_queue_dequeue_front ( double_queue *const p_double_queue, void **cons
 	}
 }
 
-int double_queue_enqueue_rear ( double_queue *const p_double_queue, void *const data )
+int double_queue_rear_add ( double_queue *const p_double_queue, void *const data )
 {
 
 	// Argument check
 	if ( p_double_queue == (void *) 0 ) goto no_double_queue;
 
 	// Lock
-	mutex_lock(p_double_queue->_lock);
+	mutex_lock(&p_double_queue->_lock);
 
 	// Initialized data
 	struct double_queue_node_s *q = p_double_queue->rear, // Q comes before R(ear)
@@ -479,7 +510,7 @@ int double_queue_enqueue_rear ( double_queue *const p_double_queue, void *const 
 	r->content = data;
 	
 	// Unlock
-	mutex_unlock(p_double_queue->_lock);
+	mutex_unlock(&p_double_queue->_lock);
 
 	// Success
 	return 1;
@@ -511,14 +542,14 @@ int double_queue_enqueue_rear ( double_queue *const p_double_queue, void *const 
 	}
 }
 
-int double_queue_dequeue_rear ( double_queue *const p_double_queue, void **const pp_value )
+int double_queue_rear_remove ( double_queue *const p_double_queue, void **const pp_value )
 {
 	
 	// Argument check
 	if ( p_double_queue == (void *) 0 ) goto no_double_queue;
 	
 	// Lock
-	mutex_lock(p_double_queue->_lock);
+	mutex_lock(&p_double_queue->_lock);
 	
 	// State check
 	if ( p_double_queue->rear == 0 ) goto queue_empty;
@@ -543,10 +574,10 @@ int double_queue_dequeue_rear ( double_queue *const p_double_queue, void **const
 		*pp_value = ret_m->content;
 
 	// Free the memory
-	(void) DOUBLE_QUEUE_REALLOC(ret_m, 0);
+	ret_m = DOUBLE_QUEUE_REALLOC(ret_m, 0);
 		
 	// Unlock
-	mutex_unlock(p_double_queue->_lock);
+	mutex_unlock(&p_double_queue->_lock);
 	
 	// Success
 	return 1;
@@ -572,7 +603,7 @@ int double_queue_dequeue_rear ( double_queue *const p_double_queue, void **const
 				// No output...
 				
 				// Unlock
-				mutex_unlock(p_double_queue->_lock);
+				mutex_unlock(&p_double_queue->_lock);
 
 				// Error
 				return 0;
@@ -590,22 +621,22 @@ int double_queue_destroy ( double_queue **const pp_double_queue )
 	double_queue *p_double_queue = *pp_double_queue;
 	
 	// Lock
-	mutex_lock(p_double_queue->_lock);
+	mutex_lock(&p_double_queue->_lock);
 
 	// No more queue for end user
 	*pp_double_queue = 0;
 
 	// Unlock
-	mutex_unlock(p_double_queue->_lock);
+	mutex_unlock(&p_double_queue->_lock);
 
 	// Empty the queue
 	while ( double_queue_empty(p_double_queue) == false )
 	{
-		double_queue_dequeue_front(p_double_queue, 0);
+		double_queue_front_remove(p_double_queue, 0);
 	}	
 
 	// Free the memory
-	(void)DOUBLE_QUEUE_REALLOC(p_double_queue, 0);
+	p_double_queue = DOUBLE_QUEUE_REALLOC(p_double_queue, 0);
 		
 	// Success
 	return 1;
