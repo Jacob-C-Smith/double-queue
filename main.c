@@ -18,9 +18,9 @@ int main ( int argc, const char *argv[] )
 	double_queue_construct(&p_double_queue);
 	
 	// Add three elements to the queue
-	double_queue_enqueue_rear(p_double_queue, "First!");
 	double_queue_enqueue_rear(p_double_queue, "Second!");
 	double_queue_enqueue_rear(p_double_queue, "Third!");
+	double_queue_enqueue_front(p_double_queue, "First!");
 
 	// Empty the queue and print each element
 	while ( double_queue_empty(p_double_queue) == false )
@@ -52,7 +52,7 @@ int main ( int argc, const char *argv[] )
 		void *v = 0;
 
 		// Dequeue an item
-		double_queue_dequeue_front(p_double_queue,&v);
+		double_queue_dequeue_rear(p_double_queue,&v);
 
 		// Print the element
 		printf("%s\n", (char *) v);
@@ -60,7 +60,7 @@ int main ( int argc, const char *argv[] )
 
 	// Cause an underflow
 	if ( double_queue_dequeue_front(p_double_queue, &value) == 0 )
-		printf("Detected queue underflow!\n");
+		printf("Detected double queue underflow!\n");
 
 	// Destroy the double queue
 	double_queue_destroy(&p_double_queue);

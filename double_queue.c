@@ -173,7 +173,7 @@ int double_queue_from_contents ( double_queue **const pp_double_queue, void* con
 	}
 }
 
-int double_queue_front ( const double_queue *const p_double_queue, const void ** const pp_value )
+int double_queue_front ( const double_queue *const p_double_queue, void ** const pp_value )
 {
 
 	// Argument check
@@ -219,7 +219,7 @@ int double_queue_front ( const double_queue *const p_double_queue, const void **
 	}
 }
  
-int double_queue_rear ( const double_queue *const p_double_queue, const void **const pp_value )
+int double_queue_rear ( const double_queue *const p_double_queue, void **const pp_value )
 {
 
 	// Argument check
@@ -302,7 +302,7 @@ bool double_queue_empty ( const double_queue *const p_double_queue )
 	}
 }
 
-int double_queue_enqueue_front ( double_queue *const p_double_queue,  void *const data )
+int double_queue_enqueue_front ( double_queue *const p_double_queue, void *const data )
 {
 
 	// Argument check
@@ -372,7 +372,7 @@ int double_queue_enqueue_front ( double_queue *const p_double_queue,  void *cons
 	}
 }
 
-int double_queue_dequeue_front ( double_queue *const p_double_queue, const void **const pp_value )
+int double_queue_dequeue_front ( double_queue *const p_double_queue, void **const pp_value )
 {
 	
 	// Argument check
@@ -441,7 +441,7 @@ int double_queue_dequeue_front ( double_queue *const p_double_queue, const void 
 	}
 }
 
-int double_queue_enqueue_rear ( double_queue *const p_double_queue,  void *const data )
+int double_queue_enqueue_rear ( double_queue *const p_double_queue, void *const data )
 {
 
 	// Argument check
@@ -511,7 +511,7 @@ int double_queue_enqueue_rear ( double_queue *const p_double_queue,  void *const
 	}
 }
 
-int double_queue_dequeue_rear ( double_queue *const p_double_queue, const void **const pp_value )
+int double_queue_dequeue_rear ( double_queue *const p_double_queue, void **const pp_value )
 {
 	
 	// Argument check
